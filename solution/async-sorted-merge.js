@@ -8,7 +8,7 @@ module.exports = (logSources, printer) => {
         db.run("CREATE TABLE IF NOT EXISTS logs (date DATETIME, msg TEXT)");
 
         var stmt = db.prepare("INSERT INTO logs VALUES (?, ?)");
-        function makeInsert(resolve, logSource) {
+        function makeInsert(logSource) {
             function insert (entry) {
                 if (entry) {
                     stmt.run(new Date(entry.date), entry.msg);
@@ -20,8 +20,8 @@ module.exports = (logSources, printer) => {
 
         var logPromises = [];
         for (var logIndex in logSources) {
-            logPromises += new Promise(function(resolve, reject) {
-                logSources[logIndex].popAsync().then(makeInsert(resolve, logSources[logIndex]));
+            logPromises += new Promise(function() {
+                logSources[logIndex].popAsync().then(makeInsert(logSources[logIndex]));
             });
         }
 
