@@ -2,7 +2,7 @@
 
 module.exports = (logSources, printer) => {
     var sqlite3 = require('sqlite3').verbose();
-    var db = new sqlite3.Database('logs.sqlite');
+    var db = new sqlite3.Database('sync_logs.sqlite');
 
     db.serialize(function() {
         db.run("CREATE TABLE IF NOT EXISTS logs (date DATETIME, msg TEXT)");
