@@ -8,18 +8,16 @@ module.exports = (logSources, printer) => {
         db.run("CREATE TABLE IF NOT EXISTS logs (date DATETIME, msg TEXT)");
 
         var stmt = db.prepare("INSERT INTO logs VALUES (?, ?)");
-        db.parallelize(function() {
-            for (var logIndex in logSources) {
-                var logSource = logSources[logIndex];
-                while(true) {
-                    var entry = logSource.pop();
-                    if (!entry) {
-                        break;
-                    }
-                    stmt.run(new Date(entry.date), entry.msg);
+        for (var logIndex in logSources) {
+            var logSource = logSources[logIndex];
+            while(true) {
+                var entry = logSource.pop();
+                if (!entry) {
+                    break;
                 }
+                stmt.run(new Date(entry.date), entry.msg);
             }
-        });
+        }
         stmt.finalize();
 
         db.each("SELECT date, msg FROM logs ORDER BY date", function(err, row) {
