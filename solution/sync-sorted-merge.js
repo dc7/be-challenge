@@ -6,6 +6,7 @@ module.exports = (logSources, printer) => {
 
     db.serialize(function() {
         db.run("CREATE TABLE IF NOT EXISTS logs (date DATETIME, msg TEXT)");
+        db.run("CREATE INDEX IF NOT EXISTS date_index ON logs (date)");
 
         var stmt = db.prepare("INSERT INTO logs VALUES (?, ?)");
         for (var logIndex in logSources) {
